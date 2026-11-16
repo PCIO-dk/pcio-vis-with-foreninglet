@@ -1,206 +1,164 @@
-===== PCIO VIS Boat =====
+=== PCIO VIS With ForeningLet ===
 Contributors: pcio
-Tags: members, boats, club, nautical
+Tags: members, foreninglet, sync, membership
 Requires at least: 6.2
 Tested up to: 7.1
-Stable tag: 1.2.0
 Requires PHP: 8.1
 Requires Plugins: pcio-vis-member-event
+Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Extends PCIO VIS Member Event with a boat club register.
+Imports ForeningLet members into PCIO VIS Member Event using a configurable cron sync job.
 
 == Description ==
 
-Adds a **Boat Register** to PCIO VIS Member Event for sailing clubs and other
-boat-oriented organisations.
+PCIO VIS With ForeningLet extends PCIO VIS Member Event with one member-import job.
+Configure the connection under **Vis > ForeningLet > Config**. Manage the job,
+its schedule, manual runs and last result under **Vis > Sync Jobs**.
 
-**Features**
+Every member returned by the ForeningLet member-list API is considered valid,
+regardless of balance. Duplicate member numbers are resolved by preferring the
+lower SaldoPaymentDeadline. Different member numbers remain separate even when
+they share an email address.
 
-* Register boats with: home harbour, name, type, model, build year, sail
-  number and MMSI number.
-* A boat belongs to a **membership number**. Everyone who shares that membership
-  number is crew on the boat, so the crew group and the subscription follow the
-  same number — there is no separate crew table to keep in sync.
-* The home harbour is picked from the shared harbour list and stored by id, so
-  the same harbour name cannot drift across boats.
-* Members can maintain their own boat and crew from the core member profile —
-  no administrator needed.
-* When a core member is deleted their boat is removed only if they were the
-  last member on that membership number; otherwise the boat stays with the
-  remaining crew.
-* Boat Register admin page at `/vis/boats`, access-controlled by the
-  `vis_boat_manage` capability (granted to Editor and Administrator on
-  activation).
-* Harbours management page at `/vis/harbours` — list, create, edit, and delete
-  harbours on a map, with duplicate-name protection and delete-guard against
-  harbours still in use.
-* Boat name appears in the core member list; clicking it opens a read-only
-  popup with the full boat details and the crew group.
+The importer creates or refreshes core member records using MemberNumber, FirstName,
+LastName, Email, Phone (or Mobile) and EnrollmentDate. It matches existing records by
+member number first. Email is used only as a fallback when it identifies a single
+source member and a single existing record; shared emails never merge people.
+Duplicate member numbers in the local database and conflicting account links
+cancel the sync before any changes.
+It preserves local addresses, volunteer flags, leave dates and existing Vis roles.
+Legacy interest, balance and newsletter fields are not copied into unrelated core fields.
 
-This plugin stores all its data locally in two custom database tables. It does not
-communicate with any external service, apart from the harbour map tiles listed
-under **External services** below.
+New members receive a linked WordPress subscriber account with a generated password
+and a username containing their member number (for example, foreninglet_677).
+Existing unlinked accounts are matched by email only when that email identifies a
+single source member and a single unlinked WordPress account.
+Shared-email members without existing links get separate accounts with the real
+shared email address. The importer temporarily allows that email only during
+account creation; it does not disable WordPress email checks elsewhere.
+Members sharing an email must log in and request password resets by username,
+since email-based lookup cannot distinguish their accounts. Anyone with access to
+that shared mailbox can receive password resets for those accounts.
+New accounts receive vis_member. Existing accounts keep their login, password,
+profile and WordPress role.
+Existing member links are retained when the ForeningLet contact email changes.
+No welcome emails are sent.
+
+After a successful import, vis_member is removed from WordPress accounts that are
+not represented in the returned list, including accounts not linked to a Vis record.
+WordPress administrators and multisite super administrators are never changed,
+including their linked member records. Accounts with vis_volunteer never lose vis_member.
+No member records or WordPress accounts are deleted.
+
+Failed requests, unexpected payloads, malformed member records, ambiguous matches
+and import failures prevent revocation. A successful empty JSON array represents
+an empty membership list and revokes all unprotected memberships.
+
+The job is installed disabled with a 24-hour frequency, following the core sync-job
+convention. It makes no API calls until explicitly run or enabled after configuration.
+WordPress cron requires site traffic or an external scheduler.
+
+Do not enable another membership sync as an alternative source of truth at the same
+time: the core Sync WP Users job can re-grant membership to retained former members,
+and other integrations may apply different removal rules.
+
+Deactivation disables the registry job and clears its scheduled event, retaining
+settings and job history. Re-enable the job after reactivation if required.
+Deletion removes this extension's options and its job when the core is active.
+Imported records, accounts and membership capabilities are retained.
 
 == Installation ==
 
-1. Make sure **PCIO VIS Member Event** is installed and active.
-2. Upload the `pcio-vis-boat` folder to `/wp-content/plugins/`.
-3. Activate the plugin in WordPress.
-4. Navigate to `/vis/boats` to start managing the boat register.
+1. Install and activate PCIO VIS Member Event.
+2. Upload pcio-vis-with-foreninglet to /wp-content/plugins/ and activate it.
+3. Open Vis > ForeningLet and enter the host and API credentials as username:password.
+4. Save the settings. Saving credentials authorizes requests when the job is run.
+5. Under Vis > Sync Jobs, run ForeningLet member sync manually and inspect the result.
+6. Enable that job for automatic daily synchronization, or choose another frequency.
 
 == Frequently Asked Questions ==
 
-= Where do I manage boats? =
+= What is the host setting? =
+The complete member-list URL: https://foreninglet.dk/api/members?version=1.
+Only this HTTPS ForeningLet endpoint is accepted; redirects and filtered or
+paginated URLs are rejected to protect credentials and membership reconciliation.
 
-Go to `/vis/boats` on the front end. A "Boats" link also appears in the Vis
-navigation and as a tile on the `/vis/` landing page for users with the
-`vis_boat_manage` capability.
+= How are API credentials stored? =
+As a non-autoloaded WordPress option, accessible through the settings page only to
+users with manage_options. The password is never displayed or included in sync results.
+Credentials are not encrypted at rest; protect database access and backups.
+Leave the password field blank to keep it, or select Remove saved credentials to clear it.
 
-= Where do I manage harbours? =
+= What if someone has no email address? =
+They are skipped without stopping other imports, and the final result includes
+"no email:1" (or the actual number skipped after deduplicating member numbers).
+No new record or account is created for them. If their member number already has
+a linked account, its existing contact data and membership are preserved.
 
-Go to `/vis/harbours` on the front end. A "Harbours" link appears in the Vis
-navigation and as a tile on the `/vis/` landing page for users with the
-`vis_boat_manage` capability. A "Vis → Harbours" submenu in wp-admin redirects
-there. Harbour names must be unique; existing duplicates are merged on upgrade.
-
-= Can crew members see their own boats? =
-
-Yes. `GET /pcio-vis/v1/boat/member/{member_id}` returns the boat registered for
-that member's membership number — an empty list when they have none, otherwise
-one boat with a `crew` array listing everyone on that number. The endpoint is
-available to administrators and to the member themselves when they are logged
-in. Members can also edit their own boat and add or remove crew at
-`/vis/members` → their profile.
-
-= Does this plugin send any data externally? =
-
-No boat, member or order data ever leaves your server. The only outbound requests are the OpenStreetMap and OpenSeaMap map tiles drawn by the harbour map in wp-admin — see **External services** below for the details.
-
-= What happens when a member is deleted from the core plugin? =
-
-If they were the only member on their membership number, the boat is deleted.
-If other members still share that number, the boat is kept and stays with the
-remaining crew.
-
-== Upgrade Notice ==
-
-= 1.1 =
-Boat records are migrated automatically. The owner column becomes the membership number, the free-text home harbour column is removed, and the membership number is made unique. Boats needing manual attention are listed in the PHP error log — see the changelog.
-
-== Screenshots ==
-
-1. New register for boat data
-2. Map showing members home habour
-3. Advanced member statistics and sponsor activity (number of link clicks)
-
-
-== Upgrade Notice ==
-
-= 1.2.0 =
-Requires PCIO VIS Member Event 1.6 or later.
-
-== Changelog ==
-
-= 1.2.0 =
-* Added: **Change history with undo** — all writes to Vis tables are logged in the new `me_change_history` table, with undo data in `me_change_undo`. A new **Vis → History** admin page lists every change with filters and an Undo button, guarded by the new `vis_undo_changes` capability (granted to System Admin).
-
-= 1.1.0 =
-* Added: **Member boat profile.** Signed-in members can now edit their own boat
-  and manage their crew directly on the core member profile page, with no
-  administrator involved. New "Boat details" and "Crew" sections appear there,
-  backed by a new `[pcio_boat_edit_profile]` shortcode alias.
-* Added: **Crew management for members.** New self-service routes
-  `GET/POST /pcio-vis/v1/boat/my-boat/{id}/crew` and
-  `DELETE /pcio-vis/v1/boat/my-boat/{id}/crew/{member_id}` let a boat owner add
-  and remove crew. A new crew member is created in the core member register,
-  given a WordPress login and the welcome email; an existing WordPress user
-  without `vis_member` is accepted and promoted. Removing a crew member clears
-  their membership number and revokes `vis_member`.
-* Added: **Boat detail popup** in the core member list. The Boat cell is now a
-  button that opens a read-only dialog with type, model, home harbour, build
-  year, sail number, MMSI, membership number, note and the full crew group.
-* Added: **Harbour list navigation** — a "Harbours" entry in the Vis navigation
-  and a tile on the `/vis/` landing page, both gated on `vis_boat_manage`.
-* Added: **Shortcode reference** — the Boat plugins are documented in the core
-  shortcode reference with a dedicated sidebar group.
-* Changed: **Crew is now the membership number.** The `me_boat_crew` table is
-  gone; every member carrying the boat's membership number is crew on that
-  boat, so the crew group and the subscription always agree. A boat's owner
-  column is the membership number and is unique — one boat per membership
-  number.
-* Changed: **Home harbour is stored by id.** The free-text `home_harbour`
-  column is removed from `me_boat_boats` and the harbour name is resolved by
-  joining the harbours table, so the same harbour cannot be spelled differently
-  on two boats. The sign-up form and the boat form now save only the selection;
-  typing free text without picking a harbour no longer stores a name.
-* Changed: **Harbour names are unique.** A case-insensitive unique index is
-  added to `me_boat_harbours.name`, and any duplicates found on upgrade are
-  merged — boats are repointed to the surviving harbour before the duplicate rows
-  are removed.
-* Changed: **Harbour picker is keyboard-navigable.** The autocomplete supports
-  Arrow Up/Down, Enter and Escape with `aria-activedescendant`, and editing the
-  text after picking clears the selection so a typo cannot save the wrong
-  harbour.
-* Changed: The Boat Register table shows a Crew column instead of an Owner
-  column, with each crew name linking to the member directory when the viewer
-  is allowed to see it.
-* Improved: Boat form validation now reports a missing boat name, an MMSI that
-  is not exactly 9 digits, a build year outside 1900–this year, and invalid
-  harbour coordinates, inline on the offending field.
-* Improved: The `/shop/accepted` style confirmation is unchanged, but a crew
-  member without their own subscription now inherits the shared membership's
-  status instead of showing an unknown state.
-* Security: a harbour placed on the map is now created only when the caller is
-  entitled to it — a confirmed order for sign-ups, or a signed-in member for
-  profile saves. Previously a sign-up that completed without a payment (no
-  active membership product, or Stripe not configured) could write a harbour
-  row from the anonymous form post.
-* Fixed: The harbour map could show no members for any harbour, because it
-  matched the boat's owner column against the member id while the rest of the
-  plugin had moved to membership numbers.
-* Fixed: Boats whose owner membership number no longer existed were silently
-  orphaned by the ownership check on the REST routes.
-
-= 1.0.3 =
-* Added a Harbours management page at `/vis/harbours` (capability `vis_boat_manage`):
-  list, create, edit and delete harbours with a Leaflet draggable-marker map.
-* Deleting a harbour that still has boats is blocked with a 409 response showing
-  the boat count; move the boats first.
-* Creating or editing a harbour rejects duplicate names (case-insensitive) with a
-  409 response, and a unique index on `me_boat_harbours.name` was added.
-* "Boats" column on the management page shows the boat-row count for each harbour.
-* A "Vis → Harbours" wp-admin submenu entry redirects to the front-end page.
-
-= 1.0.1 =
-* Security: the harbour map endpoint that lists member names and membership
-  numbers now requires the `vis_member` capability instead of being public.
-* Security: creating a shared harbour now requires the `vis_boat_manage`
-  capability. Harbours added on the map during sign-up are stored only after
-  membership is confirmed, removing the unauthenticated write path.
-
-= 1.0.0 =
-* Initial release.
-
-== Uninstall ==
-
-Deleting the plugin from **Plugins** removes its `pcio_me_boat_db_version` option, so a reinstall rebuilds the tables from scratch.
-
-The database tables are deliberately **kept**, because they hold your club's boat register and harbour list. These tables survive:
-
-* `{prefix}me_boat_boats`
-* `{prefix}me_boat_harbours`
-
-If you want a full wipe, drop both tables manually from phpMyAdmin or a SQL client. Also delete the leftover `{prefix}me_boat_crew` table if your site was created before 1.1 — it is no longer used and is dropped automatically on the 1.1 upgrade.
+= What if someone has an invalid email address or member number? =
+A non-empty invalid email address or invalid member number still rejects the
+entire import before any membership changes. Correct the source data and retry.
+The sync result identifies the first failing record by its one-based position in
+the API array and member number, followed by the exact field and validation
+requirement. Names, email addresses, passwords and other raw field values are
+never included in these diagnostics. No memberships are changed for an invalid list.
 
 == External services ==
 
-The plugin itself makes no outbound requests: all boat, harbour and member data stays in your local database, no analytics or tracking is included, and no account with any third party is required.
+This plugin connects to the ForeningLet membership API, operated by ForeningLet,
+only after an administrator configures API credentials and runs or enables the job.
+No external requests are made during ordinary browsing or while displaying settings.
 
-The one exception is the harbour map on `/vis/boats` and `/vis/harbours`, which displays map tiles in your browser:
+* **When:** each manual run or scheduled execution of ForeningLet member sync.
+* **Where:** https://foreninglet.dk/api/members?version=1 over HTTPS.
+* **What is sent:** the configured API username and password in an HTTP Basic
+  authentication header, the API version query and normal HTTP request metadata
+  (including the server IP address). Local member records are not uploaded.
+* **What is received:** the account's member list, including member identifiers,
+  names, email addresses, phone numbers, enrollment dates and balances. Supported
+  contact fields are stored locally; balances are used only for deduplication.
 
-* **OpenStreetMap** — `https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png`. Your browser's IP address is visible to OpenStreetMap, along with the map area you pan to. No boat or member data is sent. Their [tile usage policy](https://operations.osmfoundation.org/policies/tiles/) applies.
-* **OpenSeaMap** — `https://tiles.openseamap.org/seamark/{z}/{x}/{y}.png`, a transparent overlay of seamarks. Same conditions as above; see the [OpenSeaMap site](https://openseamap.org).
+Ensure you have authority to retrieve these personal data and that your privacy
+policy covers their processing and local storage. The association is responsible
+for its ForeningLet agreement and any required data processing agreement.
 
-The map is only used in wp-admin and requires the `vis_boat_manage` capability. You can replace both tile URLs in `assets/harbour-map.js` and `assets/harbours-admin.js` with your own tile server or a local tile set if you would rather not contact them at all.
+* Service information and contractual terms: https://web.foreninglet.dk/
+* Privacy policy: https://web.foreninglet.dk/privatlivspolitik/
+* Data protection information: https://web.foreninglet.dk/gdpr/
+
+ForeningLet is a trademark of its respective owner. This plugin is an independent
+PCIO integration and is not affiliated with, sponsored by or endorsed by ForeningLet.
+
+
+== Screenshots ==
+
+1. Url and credentials to access the API at ForeningLet is saved under WP Admin Vis ForeningLet
+
+== Changelog ==
+
+= 1.1.0 =
+* Show synced ForeningLet members as active on the member Membership tab.
+* Store the ForeningLet member number on linked WordPress accounts so existing users are recognised, not only newly imported ones.
+
+= 1.0.2 =
+* Screenshot updated
+
+= 1.0.0 =
+* Skip and count members without email instead of aborting the import.
+* Keep shared-email members separate with member-number usernames and stable account links.
+* Initial member API integration, protected capability reconciliation and Vis configuration.
+
+== Development ==
+
+Standalone regression tests live outside the distributable plugin at
+www/pcio-vis-with-foreninglet/sync.test.php in the source repository.
+Run them with PHP from the repository root. The harness is CLI-only and mocks
+WordPress APIs; it is not part of the WordPress.org plugin package.
+
+The repository's www/pcio-vis-with-foreninglet/phpcs.xml.dist enables the complete WordPress coding standard,
+enforces the pcio_vis global prefix and checks the pcio-vis-with-foreninglet text
+domain. With WPCS installed, run phpcs --standard=www/pcio-vis-with-foreninglet/phpcs.xml.dist
+from the repository root. This development-only configuration is not included in
+the deployed plugin or WordPress.org package.

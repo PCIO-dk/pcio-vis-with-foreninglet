@@ -1,33 +1,24 @@
 <?php
 /**
- * Uninstall handler for PCIO VIS Boat.
+ * Remove extension configuration and its registry job, retaining imported data.
  *
- * Runs only when the plugin is deleted from the WordPress admin. This file runs
- * in a minimal WP context, so plugin classes are not loaded and the option name
- * is listed explicitly.
- *
- * Removes the schema-version option so that a later reinstall rebuilds the
- * tables from scratch instead of inheriting a stale version marker.
- *
- * NOTE: the two custom tables are intentionally NOT dropped:
- *
- *     {prefix}me_boat_boats
- *     {prefix}me_boat_harbours
- *
- * They hold the club's boat register and harbour list — real club data that an
- * administrator may want to export before the plugin goes away — so we do not
- * destroy them automatically on delete. A pre-1.1 site may also still carry the
- * now-unused {prefix}me_boat_crew table; 1.1 drops it on upgrade, and it can be
- * removed by hand afterwards.
- *
- * To wipe everything, drop the two tables above from phpMyAdmin or a SQL client,
- * or call PCIO_VIS_Boat_DB::drop_tables() deliberately from your own code.
- *
- * @package PCIO_VIS_Boat
+ * @package PCIO_VIS_With_ForeningLet
  */
 
 if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	exit;
 }
 
-delete_option( 'pcio_me_boat_db_version' );
+wp_clear_scheduled_hook( 'pcio_me_cron_pcio_vis_foreninglet_sync' );
+delete_option( 'pcio_vis_foreninglet_host' );
+delete_option( 'pcio_vis_foreninglet_userpwd' );
+delete_option( 'pcio_vis_foreninglet_lock' );
+
+if ( class_exists( 'PCIO_VIS_Sync_DB' ) ) {
+	$pcio_vis_foreninglet_job = PCIO_VIS_Sync_DB::get_by_cron_name( 'pcio_vis_foreninglet_sync' );
+	if ( $pcio_vis_foreninglet_job ) {
+		if ( ! PCIO_VIS_Sync_DB::delete( (int) $pcio_vis_foreninglet_job['id'] ) ) {
+			throw new RuntimeException( esc_html__( 'Could not remove the ForeningLet sync job.', 'pcio-vis-with-foreninglet' ) );
+		}
+	}
+}

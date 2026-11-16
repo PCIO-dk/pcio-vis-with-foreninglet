@@ -1,0 +1,288 @@
+# Danish translation for PCIO VIS With ForeningLet
+# Copyright (C) 2026 PCIO
+# This file is distributed under the GPLv2 or later.
+# Translators:
+# PCIO <info@pcio.dk>, 2026
+msgid ""
+msgstr ""
+"Project-Id-Version: PCIO VIS With ForeningLet 1.0.2\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/pcio-vis-with-foreninglet\n"
+"POT-Creation-Date: 2026-10-09T14:34:24+00:00\n"
+"PO-Revision-Date: 2026-10-19 22:05+0200\n"
+"Last-Translator: PCIO <info@pcio.dk>\n"
+"Language-Team: Danish\n"
+"Language: da_DK\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Domain: pcio-vis-with-foreninglet\n"
+"X-Generator: Poedit 3.10\n"
+
+
+#. Plugin Name of the plugin
+#: pcio-vis-with-foreninglet.php
+msgid "PCIO VIS With ForeningLet"
+msgstr "PCIO VIS med ForeningLet"
+
+#. Plugin URI of the plugin
+#: pcio-vis-with-foreninglet.php
+msgid "https://www.pcio.dk/vis-plugins"
+msgstr "https://www.pcio.dk/vis-plugins"
+
+#. Description of the plugin
+#: pcio-vis-with-foreninglet.php
+msgid "Imports ForeningLet members into PCIO VIS Member Event through a registered sync job."
+msgstr "Importerer ForeningLet-medlemmer til PCIO VIS Member Event via et registreret synkroniseringsjob."
+
+#. Author of the plugin
+#: pcio-vis-with-foreninglet.php
+msgid "PCIO"
+msgstr "PCIO"
+
+#. Author URI of the plugin
+#: pcio-vis-with-foreninglet.php
+msgid "https://www.pcio.dk"
+msgstr "https://www.pcio.dk"
+
+#: includes/class-pcio-vis-with-foreninglet-plugin.php:35
+#: includes/class-pcio-vis-with-foreninglet-plugin.php:56
+msgid "ForeningLet member sync"
+msgstr "ForeningLet-medlemssynkronisering"
+
+#: includes/class-pcio-vis-with-foreninglet-plugin.php:36
+msgid "Imports ForeningLet members and grants vis_member. Revokes vis_member from absent accounts, except administrators and volunteers. Keeps all member records and WordPress accounts."
+msgstr "Importerer ForeningLet-medlemmer og tildeler vis_member. Tilbagekalder vis_member fra fraværende konti, undtagen administratorer og frivillige. Beholder alle medlemsposter og WordPress-konti."
+
+#: includes/class-pcio-vis-with-foreninglet-plugin.php:45
+msgid "Could not register the ForeningLet sync job."
+msgstr "ForeningLet-synkroniseringsjobbet kunne ikke registreres."
+
+#: includes/class-pcio-vis-with-foreninglet-plugin.php:64
+#: includes/class-pcio-vis-with-foreninglet-plugin.php:65
+msgid "ForeningLet"
+msgstr "ForeningLet"
+
+#: includes/class-pcio-vis-with-foreninglet-plugin.php:75
+#: includes/class-pcio-vis-with-foreninglet-plugin.php:120
+msgid "Insufficient permissions."
+msgstr "Utilstrækkelige tilladelser."
+
+#: includes/class-pcio-vis-with-foreninglet-plugin.php:85
+msgid "Settings were not saved. Use https://foreninglet.dk/api/members?version=1 and credentials in username:password format, without control characters."
+msgstr "Indstillingerne blev ikke gemt. Brug https://foreninglet.dk/api/members?version=1 og legitimationsoplysninger i formatet brugernavn:adgangskode, uden kontroltegn."
+
+#: includes/class-pcio-vis-with-foreninglet-plugin.php:113
+msgid "Could not save the ForeningLet settings."
+msgstr "ForeningLet-indstillingerne kunne ikke gemmes."
+
+#: includes/class-pcio-vis-with-foreninglet-plugin.php:140
+msgid "Could not disable the ForeningLet sync job."
+msgstr "ForeningLet-synkroniseringsjobbet kunne ikke deaktiveres."
+
+#: includes/class-pcio-vis-with-foreninglet-source.php:58
+msgid "Configure a valid ForeningLet host and username:password under Vis > ForeningLet."
+msgstr "Konfigurér en gyldig ForeningLet-vært og brugernavn:adgangskode under Vis > ForeningLet."
+
+#: includes/class-pcio-vis-with-foreninglet-source.php:75
+msgid "Could not connect to ForeningLet. No memberships were revoked."
+msgstr "Der kunne ikke oprettes forbindelse til ForeningLet. Ingen medlemskaber blev tilbagekaldt."
+
+#. translators: %d: HTTP status code.
+#: includes/class-pcio-vis-with-foreninglet-source.php:83
+#, php-format
+msgid "ForeningLet returned HTTP %d. No memberships were revoked."
+msgstr "ForeningLet returnerede HTTP %d. Ingen medlemskaber blev tilbagekaldt."
+
+#: includes/class-pcio-vis-with-foreninglet-source.php:91
+msgid "ForeningLet did not return a complete JSON member array. No memberships were revoked."
+msgstr "ForeningLet returnerede ikke et komplet JSON-medlemsarray. Ingen medlemskaber blev tilbagekaldt."
+
+#: includes/class-pcio-vis-with-foreninglet-source.php:110
+msgid "unavailable"
+msgstr "utilgængelig"
+
+#. translators: 1: one-based API record position, 2: member number or "unavailable", 3: field validation failure.
+#: includes/class-pcio-vis-with-foreninglet-source.php:115
+#, php-format
+msgid "ForeningLet record %1$d (MemberNumber: %2$s): %3$s The sync was cancelled before changing memberships."
+msgstr "ForeningLet-post %1$d (Medlemsnummer: %2$s): %3$s Synkroniseringen blev annulleret, før medlemskaber blev ændret."
+
+#: includes/class-pcio-vis-with-foreninglet-source.php:154
+msgid "Record"
+msgstr "Post"
+
+#: includes/class-pcio-vis-with-foreninglet-source.php:154
+msgid "expected a JSON object."
+msgstr "forventede et JSON-objekt."
+
+#: includes/class-pcio-vis-with-foreninglet-source.php:158
+msgid "required field is missing."
+msgstr "påkrævet felt mangler."
+
+#: includes/class-pcio-vis-with-foreninglet-source.php:161
+msgid "expected a non-null scalar value."
+msgstr "forventede en skalarværdi, der ikke er null."
+
+#: includes/class-pcio-vis-with-foreninglet-source.php:166
+msgid "expected a scalar value or null."
+msgstr "forventede en skalarværdi eller null."
+
+#: includes/class-pcio-vis-with-foreninglet-source.php:175
+msgid "required identifier is empty."
+msgstr "påkrævet identifikator er tom."
+
+#: includes/class-pcio-vis-with-foreninglet-source.php:178
+msgid "expected a whole number between 1 and 2147483647."
+msgstr "forventede et helt tal mellem 1 og 2147483647."
+
+#: includes/class-pcio-vis-with-foreninglet-source.php:181
+msgid "combined name is empty after sanitization."
+msgstr "det samlede navn er tomt efter rensning."
+
+#: includes/class-pcio-vis-with-foreninglet-source.php:184
+msgid "expected a valid single email address that does not require sanitization."
+msgstr "forventede en enkelt gyldig e-mailadresse, der ikke kræver rensning."
+
+#: includes/class-pcio-vis-with-foreninglet-source.php:188
+msgid "expected a finite numeric balance."
+msgstr "forventede en endelig numerisk saldo."
+
+#: includes/class-pcio-vis-with-foreninglet-source.php:203
+msgid "expected a valid calendar date in YYYY-MM-DD format or an empty value."
+msgstr "forventede en gyldig kalenderdato i formatet ÅÅÅÅ-MM-DD eller en tom værdi."
+
+#. translators: 1: API field name, 2: validation requirement.
+#: includes/class-pcio-vis-with-foreninglet-source.php:222
+#, php-format
+msgid "%1$s: %2$s"
+msgstr "%1$s: %2$s"
+
+#: includes/class-pcio-vis-with-foreninglet.php:29
+msgid "Error: a ForeningLet sync is already running. Retry later."
+msgstr "Fejl: en ForeningLet-synkronisering kører allerede. Prøv igen senere."
+
+#: includes/class-pcio-vis-with-foreninglet.php:34
+#: includes/class-pcio-vis-with-foreninglet.php:144
+msgid "Error:"
+msgstr "Fejl:"
+
+#. translators: 1: ForeningLet member number, 2: comma-separated Vis member record IDs.
+#: includes/class-pcio-vis-with-foreninglet.php:107
+#, php-format
+msgid "Member number %1$d is used by multiple Vis member records (IDs: %2$s). Resolve the duplicate member numbers before syncing. No memberships were changed."
+msgstr "Medlemsnummer %1$d bruges af flere Vis-medlemsregistreringer (ID'er: %2$s). Løs dubletterne af medlemsnumre før synkronisering. Ingen medlemskaber blev ændret."
+
+#. translators: 1: ForeningLet member number, 2: Vis member record ID, 3: ForeningLet member number that matched the record first.
+#: includes/class-pcio-vis-with-foreninglet.php:118
+#, php-format
+msgid "Member number %1$d matches Vis member record %2$d, which is already matched by ForeningLet member number %3$d. Resolve the conflicting member numbers before syncing. No memberships were changed."
+msgstr "Medlemsnummer %1$d svarer til Vis-medlemsregistrering %2$d, som allerede er knyttet til ForeningLet-medlemsnummer %3$d. Løs de modstridende medlemsnumre før synkronisering. Ingen medlemskaber blev ændret."
+
+#. translators: 1: ForeningLet member number, 2: comma-separated WordPress account IDs.
+#: includes/class-pcio-vis-with-foreninglet.php:132
+#, php-format
+msgid "Member number %1$d is stored on multiple WordPress accounts (IDs: %2$s). Resolve the account links before syncing."
+msgstr "Medlemsnummer %1$d er gemt på flere WordPress-konti (ID'er: %2$s). Løs kontotilknytningerne før synkronisering."
+
+#. translators: 1: ForeningLet member number, 2: WordPress account ID, 3: ForeningLet member number that matched the account first.
+#: includes/class-pcio-vis-with-foreninglet.php:152
+#, php-format
+msgid "Member number %1$d resolves to WordPress account %2$d, which is already matched by ForeningLet member number %3$d. Resolve the member links before syncing. No memberships were changed."
+msgstr "Medlemsnummer %1$d peger på WordPress-konto %2$d, som allerede er knyttet til ForeningLet-medlemsnummer %3$d. Løs medlemstilknytningerne før synkronisering. Ingen medlemskaber blev ændret."
+
+#: includes/class-pcio-vis-with-foreninglet.php:189
+msgid "A WordPress account still has vis_member after revocation. Check its role capabilities."
+msgstr "En WordPress-konto har stadig vis_member efter tilbagekaldelse. Kontrollér dens rolletilladelser."
+
+#. translators: 1: created members, 2: refreshed members, 3: revoked memberships, 4: protected accounts, 5: members skipped because their email is empty.
+#: includes/class-pcio-vis-with-foreninglet.php:197
+#, php-format
+msgid "ForeningLet sync: Created: %1$d | Updated: %2$d | Revoked: %3$d | Protected: %4$d | no email:%5$d"
+msgstr "ForeningLet-synkronisering: Oprettet: %1$d | Opdateret: %2$d | Tilbagekaldt: %3$d | Beskyttet: %4$d | ingen e-mail:%5$d"
+
+#: includes/class-pcio-vis-with-foreninglet.php:205
+msgid "Errors (import failures prevent revocation):"
+msgstr "Fejl (importfejl forhindrer tilbagekaldelse):"
+
+#: includes/class-pcio-vis-with-foreninglet.php:224
+msgid "Could not save a ForeningLet member in Vis."
+msgstr "Et ForeningLet-medlem kunne ikke gemmes i Vis."
+
+#: includes/class-pcio-vis-with-foreninglet.php:235
+msgid "Could not create or link a WordPress account for a ForeningLet member."
+msgstr "Der kunne ikke oprettes eller tilknyttes en WordPress-konto for et ForeningLet-medlem."
+
+#: includes/class-pcio-vis-with-foreninglet.php:239
+msgid "Could not grant vis_member to a ForeningLet member."
+msgstr "vis_member kunne ikke tildeles et ForeningLet-medlem."
+
+#. translators: 1: member number, 2: WordPress account creation error.
+#: includes/class-pcio-vis-with-foreninglet.php:284
+#, php-format
+msgid "Could not create a WordPress account for member %1$d: %2$s"
+msgstr "Der kunne ikke oprettes en WordPress-konto for medlem %1$d: %2$s"
+
+#: templates/settings.php:13
+msgid "Vis - ForeningLet"
+msgstr "Vis - ForeningLet"
+
+#: templates/settings.php:15
+msgid "ForeningLet settings saved."
+msgstr "ForeningLet-indstillinger gemt."
+
+#: templates/settings.php:17
+msgid "Saving credentials permits member retrieval from ForeningLet when the sync job runs. No requests are made while displaying this page."
+msgstr "Lagring af legitimationsoplysninger tillader hentning af medlemmer fra ForeningLet, når synkroniseringsjobbet kører. Der foretages ingen forespørgsler, mens denne side vises."
+
+#: templates/settings.php:21
+msgid "Config"
+msgstr "Konfiguration"
+
+#: templates/settings.php:24
+msgid "Host (API URL)"
+msgstr "Vært (API-URL)"
+
+#: templates/settings.php:27
+msgid "Use the full HTTPS member-list endpoint: https://foreninglet.dk/api/members?version=1. Redirects and filtered or paginated URLs are not accepted."
+msgstr "Brug det fulde HTTPS-slutpunkt for medlemslisten: https://foreninglet.dk/api/members?version=1. Omdirigeringer samt filtrerede eller paginerede URL'er accepteres ikke."
+
+#: templates/settings.php:31
+msgid "User password (username:password)"
+msgstr "Brugeradgangskode (brugernavn:adgangskode)"
+
+#: templates/settings.php:34
+msgid "Enter the API username and password separated by a colon. Leave blank to keep the saved credentials. Stored credentials are never displayed."
+msgstr "Indtast API-brugernavnet og adgangskoden adskilt af et kolon. Lad stå tomt for at beholde de gemte legitimationsoplysninger. Gemte legitimationsoplysninger vises aldrig."
+
+#: templates/settings.php:35
+msgid "Remove saved credentials (stops API access)"
+msgstr "Fjern gemte legitimationsoplysninger (stopper API-adgang)"
+
+#: templates/settings.php:39
+msgid "Save ForeningLet settings"
+msgstr "Gem ForeningLet-indstillinger"
+
+#: templates/settings.php:44
+msgid "Credentials are configured."
+msgstr "Legitimationsoplysninger er konfigureret."
+
+#: templates/settings.php:45
+msgid "Credentials are not configured. The sync cannot run."
+msgstr "Legitimationsoplysninger er ikke konfigureret. Synkroniseringen kan ikke køre."
+
+#: templates/settings.php:48
+msgid "The daily sync job starts disabled. Use Sync Jobs to run it manually, inspect its result, and enable or change its schedule. Every API-returned member is considered valid. Administrators are never changed; volunteers never lose vis_member. Member records and WordPress accounts are never deleted."
+msgstr "Det daglige synkroniseringsjob starter deaktiveret. Brug Synkroniseringsjobs til at køre det manuelt, inspicere resultatet samt aktivere eller ændre dets plan. Hvert medlem returneret af API'et betragtes som gyldigt. Administratorer ændres aldrig; frivillige mister aldrig vis_member. Medlemsposter og WordPress-konti slettes aldrig."
+
+#: templates/settings.php:49
+msgid "Members without email are skipped and counted as \"no email\" in the result; existing linked memberships are retained. Shared-email members get separate accounts with member-number usernames. They must log in and request password resets by username, not email. Anyone with access to the shared mailbox can receive password resets for those accounts."
+msgstr "Medlemmer uden e-mail springes over og tælles som \"ingen e-mail\" i resultatet; eksisterende tilknyttede medlemskaber bevares. Medlemmer med delt e-mail får separate konti med medlemsnummer som brugernavn. De skal logge ind og anmode om nulstilling af adgangskode med brugernavn, ikke e-mail. Alle med adgang til den delte postkasse kan modtage nulstillinger af adgangskode for disse konti."
+
+#: templates/settings.php:50
+msgid "Open Sync Jobs"
+msgstr "Åbn Synkroniseringsjobs"
+
+#: uninstall.php:21
+msgid "Could not remove the ForeningLet sync job."
+msgstr "ForeningLet-synkroniseringsjobbet kunne ikke fjernes."
